@@ -59,6 +59,8 @@ class HJFODataset(PointCloudDataset):
         This dataset is small enough to be stored in-memory, so load all point clouds here
         """
         PointCloudDataset.__init__(self, 'HJFO')
+        
+        self.use_potentials = use_potentials
 
         ############
         # Parameters
@@ -102,6 +104,9 @@ class HJFODataset(PointCloudDataset):
             self.split_path = 'test'
         else:
             raise ValueError(f'Unknown set for HJFO data: {self.set}')
+        
+        # Add validation_split attribute needed by validation methods
+        self.validation_split = 'val'
 
         # Proportion of validation scenes
         self.all_splits = ['train', 'val', 'test']
@@ -261,6 +266,8 @@ class HJFODataset(PointCloudDataset):
         if labels is None:
             print(f"Warning: No label property found in {filepath}")
             labels = np.zeros_like(x, dtype=np.int32)
+        else:
+            labels = labels.astype(np.int32)
         
         return points, reflectance, labels
 
